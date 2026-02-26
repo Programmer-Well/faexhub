@@ -1,9 +1,5 @@
 import styled from "styled-components";
 
-// ============================================================
-// CONTAINER E CARD
-// ============================================================
-
 export const CadastroContainer = styled.div`
   min-height: 100vh;
   display: flex;
@@ -58,9 +54,6 @@ export const Title = styled.h1`
   }
 `;
 
-// ============================================================
-// STEPPER
-// ============================================================
 
 export const StepperContainer = styled.div`
   display: flex;
@@ -127,9 +120,6 @@ export const StepLine = styled.div`
   }
 `;
 
-// ============================================================
-// FORM LAYOUT
-// ============================================================
 
 export const FormRow = styled.div`
   display: flex;
@@ -158,9 +148,7 @@ export const FieldLabel = styled.label`
   margin-bottom: 6px;
 `;
 
-// ============================================================
-// INPUTS
-// ============================================================
+
 
 export const StyledInput = styled.input`
   width: 100%;
@@ -280,9 +268,6 @@ export const StyledTextarea = styled.textarea`
   }
 `;
 
-// ============================================================
-// RADIO BUTTONS
-// ============================================================
 
 export const RadioGroup = styled.div`
   display: flex;
@@ -305,10 +290,6 @@ export const RadioOption = styled.label`
     cursor: pointer;
   }
 `;
-
-// ============================================================
-// BOTOES E LINKS
-// ============================================================
 
 export const SubmitButton = styled.button`
   width: 100%;
