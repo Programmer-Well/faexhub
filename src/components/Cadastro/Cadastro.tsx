@@ -1,6 +1,6 @@
-import { type FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Check, Visibility, VisibilityOff } from "@mui/icons-material";
+import { type FormEvent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Check, Visibility, VisibilityOff } from '@mui/icons-material';
 import {
   CadastroContainer,
   CadastroCard,
@@ -24,11 +24,40 @@ import {
   RadioOption,
   SubmitButton,
   BackLink,
-} from "./Cadastro.styles";
+  CepLoaddingWrapper,
+  CepSpinner,
+  CepErroText,
+} from './Cadastro.styles';
 
+// Lista de estados brasileiros
 const ESTADOS_BR = [
-  "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
-  "PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO",
+  'AC',
+  'AL',
+  'AP',
+  'AM',
+  'BA',
+  'CE',
+  'DF',
+  'ES',
+  'GO',
+  'MA',
+  'MT',
+  'MS',
+  'MG',
+  'PA',
+  'PB',
+  'PR',
+  'PE',
+  'PI',
+  'RJ',
+  'RN',
+  'RS',
+  'RO',
+  'RR',
+  'SC',
+  'SP',
+  'SE',
+  'TO',
 ];
 
 const Cadastro = () => {
@@ -36,31 +65,78 @@ const Cadastro = () => {
   const [passo, setPasso] = useState(1);
 
   // === Passo 1 — Perfil ===
-  const [nome, setNome] = useState("");
-  const [sexo, setSexo] = useState("masculino");
-  const [dataNascimento, setDataNascimento] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [cpf, setCpf] = useState("");
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [nome, setNome] = useState('');
+  const [sexo, setSexo] = useState('masculino');
+  const [dataNascimento, setDataNascimento] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [confirmarSenha, setConfirmarSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
 
   // === Passo 2 — Endereço ===
-  const [cep, setCep] = useState("");
-  const [bairro, setBairro] = useState("");
-  const [numero, setNumero] = useState("");
-  const [cidade, setCidade] = useState("");
-  const [uf, setUf] = useState("");
-  const [endereco, setEndereco] = useState("");
-  const [complemento, setComplemento] = useState("");
+  const [cep, setCep] = useState('');
+  const [bairro, setBairro] = useState('');
+  const [numero, setNumero] = useState('');
+  const [cidade, setCidade] = useState('');
+  const [uf, setUf] = useState('');
+  const [endereco, setEndereco] = useState('');
+  const [complemento, setComplemento] = useState('');
+
+  const [cepLoading, setCepLoading] = useState(false);
+  const [cepErro, setCepErro] = useState('');
+
+  const mascararCep = (valor: string) => {
+    const soDigitos = valor.replace(/\D/g, '').slice(0, 8);
+    return soDigitos.length > 5
+      ? `${soDigitos.slice(0, 5)}-${soDigitos.slice(5)}`
+      : soDigitos;
+  };
+
+  const handleCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const mascarado = mascararCep(e.target.value);
+    setCep(mascarado);
+    buscarCep(mascarado);
+  };
+
+  const buscarCep = async (cepDigitado: string) => {
+    const soDigitos = cepDigitado.replace(/\D/g, '');
+    if (soDigitos.length !== 8) return;
+
+    setCepLoading(true);
+    setCepErro('');
+
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${soDigitos}/json/`);
+      const data = await res.json();
+
+      if (data.erro) {
+        setCepErro('CEP não encontrado.');
+        setEndereco('');
+        setBairro('');
+        setCidade('');
+        setUf('');
+        return;
+      }
+
+      setEndereco(data.logradouro || '');
+      setBairro(data.bairro || '');
+      setCidade(data.localidade || '');
+      setUf(data.uf || '');
+    } catch {
+      setCepErro('Erro ao buscar CEP. Tente novamente.');
+    } finally {
+      setCepLoading(false);
+    }
+  };
 
   const handleAvancar = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (senha !== confirmarSenha) {
-      alert("As senhas não coincidem!");
+      alert('As senhas não coincidem!');
       return;
     }
 
@@ -69,16 +145,28 @@ const Cadastro = () => {
 
   const handleFinalizar = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Cadastro:", {
-      nome, sexo, dataNascimento, telefone, cpf, email, senha,
-      cep, bairro, numero, cidade, uf, endereco, complemento,
+    console.log('Cadastro:', {
+      nome,
+      sexo,
+      dataNascimento,
+      telefone,
+      cpf,
+      email,
+      senha,
+      cep,
+      bairro,
+      numero,
+      cidade,
+      uf,
+      endereco,
+      complemento,
     });
   };
 
   return (
     <CadastroContainer>
       <CadastroCard>
-        <Logo src="/logo-faex-hub.png" alt="Logo FAEX Hub" />
+        <Logo src='/logo-faex-hub.png' alt='Logo FAEX Hub' />
         <Divider />
         <Title>Novo cadastro</Title>
 
@@ -86,7 +174,7 @@ const Cadastro = () => {
         <StepperContainer>
           <StepWrapper>
             <StepCircle $active={passo === 1} $completed={passo > 1}>
-              {passo > 1 ? <Check /> : "1"}
+              {passo > 1 ? <Check /> : '1'}
             </StepCircle>
             <StepLabel $active={passo === 1}>Perfil</StepLabel>
           </StepWrapper>
@@ -107,10 +195,10 @@ const Cadastro = () => {
             <FieldGroup>
               <FieldLabel>Nome do aluno</FieldLabel>
               <StyledInput
-                type="text"
+                type='text'
                 value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                placeholder="Digite o nome do aluno"
+                onChange={e => setNome(e.target.value)}
+                placeholder='Digite o nome do aluno'
                 required
               />
             </FieldGroup>
@@ -121,21 +209,21 @@ const Cadastro = () => {
                 <RadioGroup>
                   <RadioOption>
                     <input
-                      type="radio"
-                      name="sexo"
-                      value="masculino"
-                      checked={sexo === "masculino"}
-                      onChange={(e) => setSexo(e.target.value)}
+                      type='radio'
+                      name='sexo'
+                      value='masculino'
+                      checked={sexo === 'masculino'}
+                      onChange={e => setSexo(e.target.value)}
                     />
                     Masculino
                   </RadioOption>
                   <RadioOption>
                     <input
-                      type="radio"
-                      name="sexo"
-                      value="feminino"
-                      checked={sexo === "feminino"}
-                      onChange={(e) => setSexo(e.target.value)}
+                      type='radio'
+                      name='sexo'
+                      value='feminino'
+                      checked={sexo === 'feminino'}
+                      onChange={e => setSexo(e.target.value)}
                     />
                     Feminino
                   </RadioOption>
@@ -145,9 +233,9 @@ const Cadastro = () => {
               <FieldGroup>
                 <FieldLabel>Data de nascimento</FieldLabel>
                 <StyledInput
-                  type="date"
+                  type='date'
                   value={dataNascimento}
-                  onChange={(e) => setDataNascimento(e.target.value)}
+                  onChange={e => setDataNascimento(e.target.value)}
                   required
                 />
               </FieldGroup>
@@ -156,10 +244,10 @@ const Cadastro = () => {
             <FieldGroup>
               <FieldLabel>Telefone</FieldLabel>
               <StyledInput
-                type="tel"
+                type='tel'
                 value={telefone}
-                onChange={(e) => setTelefone(e.target.value)}
-                placeholder="(00) 00000-0000"
+                onChange={e => setTelefone(e.target.value)}
+                placeholder='(00) 00000-0000'
                 required
               />
             </FieldGroup>
@@ -167,10 +255,10 @@ const Cadastro = () => {
             <FieldGroup>
               <FieldLabel>CPF</FieldLabel>
               <StyledInput
-                type="text"
+                type='text'
                 value={cpf}
-                onChange={(e) => setCpf(e.target.value)}
-                placeholder="000.000.000-00"
+                onChange={e => setCpf(e.target.value)}
+                placeholder='000.000.000-00'
                 required
               />
             </FieldGroup>
@@ -178,10 +266,10 @@ const Cadastro = () => {
             <FieldGroup>
               <FieldLabel>Email</FieldLabel>
               <StyledInput
-                type="email"
+                type='email'
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Digite o email"
+                onChange={e => setEmail(e.target.value)}
+                placeholder='Digite o email'
                 required
               />
             </FieldGroup>
@@ -190,16 +278,16 @@ const Cadastro = () => {
               <FieldLabel>Senha</FieldLabel>
               <InputWithAdornment>
                 <StyledInput
-                  type={mostrarSenha ? "text" : "password"}
+                  type={mostrarSenha ? 'text' : 'password'}
                   value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  placeholder="Digite sua senha"
+                  onChange={e => setSenha(e.target.value)}
+                  placeholder='Digite sua senha'
                   required
                 />
                 <AdornmentButton
-                  type="button"
+                  type='button'
                   onClick={() => setMostrarSenha(!mostrarSenha)}
-                  aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+                  aria-label={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
                 >
                   {mostrarSenha ? <VisibilityOff /> : <Visibility />}
                 </AdornmentButton>
@@ -210,24 +298,28 @@ const Cadastro = () => {
               <FieldLabel>Confirmar Senha</FieldLabel>
               <InputWithAdornment>
                 <StyledInput
-                  type={mostrarConfirmarSenha ? "text" : "password"}
+                  type={mostrarConfirmarSenha ? 'text' : 'password'}
                   value={confirmarSenha}
-                  onChange={(e) => setConfirmarSenha(e.target.value)}
-                  placeholder="Confirme sua senha"
+                  onChange={e => setConfirmarSenha(e.target.value)}
+                  placeholder='Confirme sua senha'
                   required
                 />
                 <AdornmentButton
-                  type="button"
-                  onClick={() => setMostrarConfirmarSenha(!mostrarConfirmarSenha)}
-                  aria-label={mostrarConfirmarSenha ? "Ocultar senha" : "Mostrar senha"}
+                  type='button'
+                  onClick={() =>
+                    setMostrarConfirmarSenha(!mostrarConfirmarSenha)
+                  }
+                  aria-label={
+                    mostrarConfirmarSenha ? 'Ocultar senha' : 'Mostrar senha'
+                  }
                 >
                   {mostrarConfirmarSenha ? <VisibilityOff /> : <Visibility />}
                 </AdornmentButton>
               </InputWithAdornment>
             </FieldGroup>
 
-            <SubmitButton type="submit">Avançar</SubmitButton>
-            <BackLink type="button" onClick={() => navigate("/login")}>
+            <SubmitButton type='submit'>Avançar</SubmitButton>
+            <BackLink type='button' onClick={() => navigate('/login')}>
               Já tem uma conta? Entrar
             </BackLink>
           </form>
@@ -238,23 +330,28 @@ const Cadastro = () => {
           <form onSubmit={handleFinalizar}>
             <FieldGroup>
               <FieldLabel>CEP</FieldLabel>
-              <StyledInput
-                type="text"
-                value={cep}
-                onChange={(e) => setCep(e.target.value)}
-                placeholder="Digite seu CEP"
-                required
-              />
+              <CepLoaddingWrapper>
+                <StyledInput
+                  type='text'
+                  value={cep}
+                  onChange={handleCepChange}
+                  placeholder='00000-000'
+                  maxLength={9}
+                  required
+                />
+                {cepLoading && <CepSpinner />}
+              </CepLoaddingWrapper>
+              {cepErro && <CepErroText>{cepErro}</CepErroText>}
             </FieldGroup>
 
             <FormRow>
               <FieldGroup $flex={2}>
                 <FieldLabel>Bairro</FieldLabel>
                 <StyledInput
-                  type="text"
+                  type='text'
                   value={bairro}
-                  onChange={(e) => setBairro(e.target.value)}
-                  placeholder="Digite seu Bairro"
+                  onChange={e => setBairro(e.target.value)}
+                  placeholder='Digite seu Bairro'
                   required
                 />
               </FieldGroup>
@@ -262,10 +359,10 @@ const Cadastro = () => {
               <FieldGroup $flex={1}>
                 <FieldLabel>Número</FieldLabel>
                 <StyledInput
-                  type="text"
+                  type='text'
                   value={numero}
-                  onChange={(e) => setNumero(e.target.value)}
-                  placeholder="Número"
+                  onChange={e => setNumero(e.target.value)}
+                  placeholder='Número'
                   required
                 />
               </FieldGroup>
@@ -276,14 +373,14 @@ const Cadastro = () => {
                 <FieldLabel>Cidade</FieldLabel>
                 <StyledSelect
                   value={cidade}
-                  onChange={(e) => setCidade(e.target.value)}
+                  onChange={e => setCidade(e.target.value)}
                   required
                 >
-                  <option value="">Selecionar...</option>
-                  <option value="Lavras">Lavras</option>
-                  <option value="Belo Horizonte">Belo Horizonte</option>
-                  <option value="São Paulo">São Paulo</option>
-                  <option value="Rio de Janeiro">Rio de Janeiro</option>
+                  <option value=''>Selecionar...</option>
+                  <option value='Lavras'>Lavras</option>
+                  <option value='Belo Horizonte'>Belo Horizonte</option>
+                  <option value='São Paulo'>São Paulo</option>
+                  <option value='Rio de Janeiro'>Rio de Janeiro</option>
                 </StyledSelect>
               </FieldGroup>
 
@@ -291,11 +388,11 @@ const Cadastro = () => {
                 <FieldLabel>UF</FieldLabel>
                 <StyledSelect
                   value={uf}
-                  onChange={(e) => setUf(e.target.value)}
+                  onChange={e => setUf(e.target.value)}
                   required
                 >
-                  <option value="">Selecionar...</option>
-                  {ESTADOS_BR.map((estado) => (
+                  <option value=''>Selecionar...</option>
+                  {ESTADOS_BR.map(estado => (
                     <option key={estado} value={estado}>
                       {estado}
                     </option>
@@ -307,10 +404,10 @@ const Cadastro = () => {
             <FieldGroup>
               <FieldLabel>Endereço</FieldLabel>
               <StyledInput
-                type="text"
+                type='text'
                 value={endereco}
-                onChange={(e) => setEndereco(e.target.value)}
-                placeholder="Digite seu Endereço"
+                onChange={e => setEndereco(e.target.value)}
+                placeholder='Digite seu Endereço'
                 required
               />
             </FieldGroup>
@@ -319,13 +416,13 @@ const Cadastro = () => {
               <FieldLabel>Complemento</FieldLabel>
               <StyledTextarea
                 value={complemento}
-                onChange={(e) => setComplemento(e.target.value)}
-                placeholder="Ex: Ao lado da Escola rivadavia"
+                onChange={e => setComplemento(e.target.value)}
+                placeholder='Ex: Ao lado da Escola rivadavia'
               />
             </FieldGroup>
 
-            <SubmitButton type="submit">Finalizar</SubmitButton>
-            <BackLink type="button" onClick={() => navigate("/login")}>
+            <SubmitButton type='submit'>Finalizar</SubmitButton>
+            <BackLink type='button' onClick={() => navigate('/login')}>
               Já tem uma conta? Entrar
             </BackLink>
           </form>
