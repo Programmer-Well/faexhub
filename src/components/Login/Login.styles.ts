@@ -1,9 +1,5 @@
 import styled, { keyframes } from "styled-components";
 
-// ============================================================
-// INTERFACES TYPESCRIPT
-// ============================================================
-
 interface FloatingAvatarProps {
   $delay?: string;
   $top?: string;
@@ -12,10 +8,6 @@ interface FloatingAvatarProps {
   $right?: string;
   $hideOnMobile?: boolean;
 }
-
-// ============================================================
-// ANIMAÇÃO DE FLUTUAÇÃO
-// ============================================================
 
 const float = keyframes`
   0%, 100% {
@@ -28,10 +20,6 @@ const float = keyframes`
     transform: translateY(10px) rotate(-2deg);
   }
 `;
-
-// ============================================================
-// COMPONENTES ESTILIZADOS
-// ============================================================
 
 export const LoginContainer = styled.div`
   min-height: 100vh;

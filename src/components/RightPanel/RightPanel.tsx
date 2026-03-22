@@ -1,42 +1,77 @@
-import { AniversarioCard, FriendAvatarImage, FriendInfo, FriendItem, FriendsCard, RightPanel, SectionTitle, SendGiftButton } from "./RightPanel.styles";
+import { useEffect, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { api, type Amizade, type AmizadeUsuario } from '../../services/api';
+import {
+  AniversarioCard,
+  FriendAvatarImage,
+  FriendInfo,
+  FriendItem,
+  FriendsCard,
+  RightPanel,
+  SectionTitle,
+  SendGiftButton,
+} from './RightPanel.styles';
 
-const friends = [
-  { name: "Tiago Rocha", email: "tiagorocha@gmail.com", avatar: "/rosto_01.png" },
-  { name: "Larissa Alves", email: "larissaalves@gmail.com", avatar: "/rosto_02.png" },
-  { name: "Andreza Soares", email: "andrezasoares@gmail.com", avatar: "/rosto_03.png" },
-  { name: "Julia Fernanda", email: "juliafernanda@gmail.com", avatar: "/rosto_04.png" },
-  { name: "Marcela Silva", email: "marcelasilva@gmail.com", avatar: "/rosto_05.png" },
-];
-
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 export default function RightPanels() {
-    return (
-         <RightPanel>
-            <SectionTitle>Amigos</SectionTitle>
+  const { user } = useAuth();
+  const usuario = user?.usuario;
+  const [friends, setFriends] = useState<AmizadeUsuario[]>([]);
 
-            <FriendsCard>
-                {friends.map((friend) => (
-                    <FriendItem key={friend.email}>
-                        <FriendAvatarImage src={friend.avatar} alt={friend.name} />
-                        <FriendInfo>
-                            <strong>{friend.name}</strong>
-                            <span>{friend.email}</span>
-                        </FriendInfo>
-                    </FriendItem>
-                ))}
-            </FriendsCard>
+  useEffect(() => {
+    if (!user) return;
 
-            <AniversarioCard>
-                <img src="/Aniversario.png" alt="" />
-                <h2>Aniversariante do mês</h2>
-                <p><strong>Marcela Silva</strong> está fazendo aniversario hoje, envie um presente para ela!</p>
-                <hr />
-                <SendGiftButton>
-                    Enviar presente <ArrowForwardIosIcon />
-                </SendGiftButton>
-            </AniversarioCard>
+    api
+      .getAmizades()
+      .then(resp => {
+        const items = resp.dados ?? resp.data ?? [];
+        const amigos = items.map((amigo: Amizade) => {
+          const isSolicitante =
+            Number(amigo.solicitante.id) === Number(usuario?.id);
+          return isSolicitante ? amigo.receptor : amigo.solicitante;
+        });
+        setFriends(amigos);
+      })
+      .catch(console.error);
+  }, [user]);
 
-        </RightPanel>
-    )
+  return (
+    <RightPanel>
+      <SectionTitle>Amigos</SectionTitle>
+
+      <FriendsCard>
+        {friends.length === 0 ? (
+          <FriendItem>
+            <FriendInfo>
+              <span>Você não tem nenhum amigo</span>
+            </FriendInfo>
+          </FriendItem>
+        ) : (
+          friends.map(friend => (
+            <FriendItem key={friend.email}>
+              <FriendAvatarImage src={friend.foto} alt={friend.nome} />
+              <FriendInfo>
+                <strong>{friend.nome}</strong>
+                <span>{friend.email}</span>
+              </FriendInfo>
+            </FriendItem>
+          ))
+        )}
+      </FriendsCard>
+
+      <AniversarioCard>
+        <img src='/Aniversario.png' alt='' />
+        <h2>Aniversariante do mês</h2>
+        <p>
+          <strong>Marcela Silva</strong> está fazendo aniversario hoje, envie um
+          presente para ela!
+        </p>
+        <hr />
+        <SendGiftButton>
+          Enviar presente <ArrowForwardIosIcon />
+        </SendGiftButton>
+      </AniversarioCard>
+    </RightPanel>
+  );
 }

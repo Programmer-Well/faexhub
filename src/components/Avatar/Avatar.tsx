@@ -1,25 +1,7 @@
-/**
- * Avatar.tsx - COMPONENTE REUTILIZÁVEL DE AVATAR
- *
- * Este componente exibe uma foto de perfil circular (avatar).
- * Ele é "reutilizável" — pode ser usado em qualquer lugar da aplicação
- * apenas passando propriedades (props) diferentes.
- *
- * Conceitos importantes aqui:
- * - Props (propriedades): dados que um componente pai passa para o filho.
- * - Renderização condicional: exibir algo diferente com base em uma condição.
- * - Styled-components: CSS escrito dentro do JavaScript.
- */
-
 import { Box } from "@mui/material";
 import styled from "styled-components";
 
-// ============================================================
-// INTERFACES TYPESCRIPT
-// ============================================================
 
-// Interface que define as props aceitas pelo componente Avatar.
-// O "?" indica que a prop é opcional.
 interface AvatarProps {
   src?: string;
   alt?: string;
@@ -28,20 +10,11 @@ interface AvatarProps {
   size?: number;
 }
 
-// Interface para as props dinâmicas do AvatarContainer (styled-component).
 interface AvatarContainerProps {
   color: string;
   size: number;
 }
 
-// ============================================================
-// STYLED COMPONENTS
-// styled(Box) cria um novo componente baseado no Box do MUI,
-// mas com estilos CSS personalizados.
-// ============================================================
-
-// Container circular do avatar.
-// Recebe "props" dinâmicas (color e size) para personalizar cada avatar.
 const AvatarContainer = styled(Box)<AvatarContainerProps>`
   border-radius: 50%; /* Torna o elemento perfeitamente circular */
   display: flex;
@@ -71,25 +44,15 @@ const AvatarContainer = styled(Box)<AvatarContainerProps>`
   }
 `;
 
-// Placeholder exibido quando NÃO há imagem disponível.
 const AvatarPlaceholder = styled.div`
   font-size: 1.5rem;
   color: rgba(255, 255, 255, 0.8);
 `;
 
-// ============================================================
-// COMPONENTE AVATAR
-// ============================================================
-
-// Desestruturação de props: em vez de receber "props" e usar "props.src",
-// extraímos diretamente { src, alt, className, color, size }.
-// Os valores após "=" são VALORES PADRÃO — usados quando a prop não é fornecida.
 const Avatar = ({ src, alt, className = "", color = "#667eea", size = 60 }: AvatarProps) => {
   return (
     <AvatarContainer className={className} color={color} size={size}>
-      {/* Renderização condicional com operador ternário (condição ? verdadeiro : falso).
-          Se "src" existir (tiver valor), exibe a imagem.
-          Se "src" for vazio/undefined, exibe o placeholder com o texto "alt". */}
+     
       {src ? (
         <img src={src} alt={alt} />
       ) : (

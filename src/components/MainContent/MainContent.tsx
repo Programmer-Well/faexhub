@@ -1,48 +1,43 @@
-import { Outlet } from "react-router-dom";
+import { Outlet } from 'react-router-dom';
 
 import {
-    EditProfileButton,
-    Logoimage, 
-    MainContent,
-    ProfileAvatarWrapper, 
-    ProfileBanner, 
-    ProfileCard, 
-    ProfileInfoRow, 
-    ProfileTexts,
-} from "./MainContent.styles";
-
-
-const currentUser = {
-  name: "Paulo Souza",
-  email: "paulo.csouzas@outlook.com",
-  avatar: "/perfil.jpg",
-};
+  EditProfileButton,
+  Logoimage,
+  MainContent,
+  ProfileAvatarWrapper,
+  ProfileBanner,
+  ProfileCard,
+  ProfileInfoRow,
+  ProfileTexts,
+} from './MainContent.styles';
+import { useAuth } from '../../context/AuthContext';
 
 export default function MainContents() {
-    return (
-        <MainContent>
-            <ProfileCard>
+  const { user } = useAuth();
+  const usuario = user?.usuario;
 
-                <ProfileBanner>
-                    <Logoimage src="./logo-white.png" alt="Logo Faex Hub" />
-                </ProfileBanner>
+  return (
+    <MainContent>
+      <ProfileCard>
+        <ProfileBanner>
+          <Logoimage src='./logo-white.png' alt='Logo Faex Hub' />
+        </ProfileBanner>
 
-                <ProfileInfoRow>
-                    <ProfileAvatarWrapper>
-                        <img src={currentUser.avatar} alt={currentUser.name} />
-                    </ProfileAvatarWrapper>
+        <ProfileInfoRow>
+          <ProfileAvatarWrapper>
+            <img src={usuario?.foto} alt={usuario?.nome} />
+          </ProfileAvatarWrapper>
 
-                    <ProfileTexts>
-                        <h2>{currentUser.name}</h2>
-                        <span>{currentUser.email}</span>
-                    </ProfileTexts>
+          <ProfileTexts>
+            <h2>{usuario?.nome}</h2>
+            <span>{usuario?.email}</span>
+          </ProfileTexts>
 
-                    <EditProfileButton>Editar Perfil</EditProfileButton>
-                </ProfileInfoRow>
+          <EditProfileButton>Editar Perfil</EditProfileButton>
+        </ProfileInfoRow>
+      </ProfileCard>
 
-            </ProfileCard>
-
-            <Outlet />
-        </MainContent>
-    )
+      <Outlet />
+    </MainContent>
+  );
 }

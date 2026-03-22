@@ -16,6 +16,7 @@ import {
   SidebarCloseButton,
   SidebarContainer,
 } from './Sidebar.styles';
+import { useAuth } from '../../context/AuthContext';
 
 // Lista de objeto menu
 const navItems = [
@@ -37,6 +38,7 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
 
   const handleNavigate = (path: string) => {
     navigate(path);
@@ -62,7 +64,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             <NavLabel>{item.label}</NavLabel>
           </NavItem>
         ))}
-        <NavItem $logout onClick={() => handleNavigate('/login')}>
+        <NavItem $logout onClick={logout}>
           <NavIcon>
             <LogoutRoundedIcon />
           </NavIcon>
