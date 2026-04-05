@@ -1,7 +1,5 @@
 import { useState } from "react"
-
 import Sidebar from "../Sidebar/Sidebar";
-
 import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
 import PhotoIcon from "@mui/icons-material/Photo";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -156,7 +154,7 @@ export default function Dashboard() {
                                 </ActivityCardButtonLike>
                             </ActivityCardFooter>
                         </ActivityCard>
-                    ))}
+                    ))}+
                 </MainContent>
 
                 <RightPanel>

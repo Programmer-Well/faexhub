@@ -25,22 +25,18 @@ const AvatarContainer = styled(Box)<AvatarContainerProps>`
   border: 3px solid rgba(255, 255, 255, 0.6); /* Borda branca semitransparente */
   transition: transform 0.3s ease; /* Animação suave ao passar o mouse */
 
-  /* Props dinâmicas: o styled-components permite acessar as props do componente
-     para gerar CSS dinâmico. Aqui, "color" e "size" são passados como props. */
   background: ${(props) => props.color};
   width: ${(props) => props.size}px;
   height: ${(props) => props.size}px;
 
-  /* Efeito hover: ao passar o mouse, o avatar aumenta 10% de tamanho. */
   &:hover {
     transform: scale(1.1);
   }
 
-  /* Estiliza a tag <img> que está DENTRO do AvatarContainer. */
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* A imagem preenche o espaço sem distorcer */
+    object-fit: cover; 
   }
 `;
 
