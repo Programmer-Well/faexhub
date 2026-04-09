@@ -64,7 +64,6 @@ const Cadastro = () => {
   const navigate = useNavigate();
   const [passo, setPasso] = useState(1);
 
-  // === Passo 1 — Perfil ===
   const [nome, setNome] = useState('');
   const [sexo, setSexo] = useState('masculino');
   const [dataNascimento, setDataNascimento] = useState('');
@@ -76,7 +75,6 @@ const Cadastro = () => {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
 
-  // === Passo 2 — Endereço ===
   const [cep, setCep] = useState('');
   const [bairro, setBairro] = useState('');
   const [numero, setNumero] = useState('');
